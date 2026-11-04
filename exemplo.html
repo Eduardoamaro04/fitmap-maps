@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exemplo mínimo da FitMapMaps</title>
+<style>
+  html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+  #map { height: 100%; }
+  #aviso { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: #0B1220; color: #F3F6FB;
+           padding: 8px 14px; border-radius: 99px; font-size: 14px; z-index: 5; }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="aviso">Carregando...</div>
+
+<!-- 1) Carrega a biblioteca (este arquivo está na mesma pasta dela) -->
+<script src="fitmap-maps.js"></script>
+
+<!-- 2) Usa a biblioteca: abre o mapa, busca academias na área e mostra os pinos -->
+<script>
+  FitMapMaps.iniciar({
+    chave: "SUA_CHAVE_DO_GOOGLE",                       // <-- troque pela sua chave
+    elemento: "map",
+    centro: { lat: -9.931042, lng: -67.818991 },
+    zoom: 14,
+    buscas: { academia: "academias" },
+    aoClicarNoPino: function (id) {
+      alert("Você clicou no local de id: " + id);
+    },
+    aoErro: function (mensagem) {
+      document.getElementById("aviso").textContent = mensagem;
+    }
+  }).then(async function (mapa) {
+    const area = mapa.capturarArea();                   // a parte do mapa que está na tela
+    const lugares = await mapa.buscarLocais("academia", area);
+    mapa.mostrarPinos(lugares);                         // desenha um pino para cada local
+    document.getElementById("aviso").textContent = lugares.length + " academias nesta área";
+  });
+</script>
+
+</body>
+</html>
